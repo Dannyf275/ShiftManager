@@ -4,15 +4,12 @@ import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { 
-  AppBar, Toolbar, Typography, Button, Container, Box, Fab, Badge, IconButton, 
-  ToggleButton, ToggleButtonGroup, useTheme, useMediaQuery 
-} from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Container, Box, Fab, Badge, IconButton, ToggleButton, ToggleButtonGroup, useTheme, useMediaQuery } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import LogoutIcon from '@mui/icons-material/Logout'; // אייקון יציאה למובייל
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import PageContainer from '../components/PageContainer';
 import AdminCalendar from '../components/AdminCalendar';
@@ -20,6 +17,7 @@ import CreateShiftDialog from '../components/CreateShiftDialog';
 import RequestsManager from '../components/RequestsManager';
 import AdminShiftDetails from '../components/AdminShiftDetails';
 import ReportsPanel from '../components/ReportsPanel';
+import logo from '../assets/logo.jpg'; // ייבוא הלוגו (נניח שהוא בתיקיית assets)
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -56,21 +54,25 @@ export default function AdminDashboard() {
         <AppBar position="static" sx={{ background: 'linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%)' }}>
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', px: isMobile ? 1 : 2 }}>
             
-            {/* צד ימין של התפריט (ריק לאיזון בדסקטופ, מוסתר במובייל) */}
-            {!isMobile && <Box sx={{ flex: 1 }} />}
+            {/* צד שמאל: לוגו (רק בדסקטופ) */}
+            {!isMobile && (
+              <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+                <img src={logo} alt="לוגו האגודה" style={{ height: 40, borderRadius: 4 }} />
+              </Box>
+            )}
             
-            <Typography variant={isMobile ? "subtitle1" : "h6"} component="div" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
+            {/* כותרת באמצע */}
+            <Typography variant={isMobile ? "subtitle1" : "h6"} component="div" sx={{ fontWeight: 'bold', letterSpacing: 1, textAlign: 'center', flexGrow: isMobile ? 1 : 0 }}>
               ניהול משמרות
             </Typography>
 
-            <Box sx={{ flex: isMobile ? 0 : 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
               <IconButton color="inherit" onClick={() => setOpenRequests(true)} sx={{ ml: 1 }}>
                 <Badge badgeContent={pendingCount} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
               
-              {/* במובייל רק אייקון יציאה, במחשב כפתור עם טקסט */}
               {isMobile ? (
                  <IconButton color="inherit" onClick={handleLogout}><LogoutIcon /></IconButton>
               ) : (
@@ -89,7 +91,7 @@ export default function AdminDashboard() {
               exclusive
               onChange={(e, newView) => { if(newView) setView(newView) }}
               color="primary"
-              size={isMobile ? "small" : "medium"} // כפתורים קטנים יותר במובייל
+              size={isMobile ? "small" : "medium"}
               sx={{ bgcolor: 'white', borderRadius: 2, boxShadow: 1 }}
             >
               <ToggleButton value="calendar" sx={{ px: isMobile ? 2 : 3 }}>
@@ -124,6 +126,13 @@ export default function AdminDashboard() {
           <AdminShiftDetails shift={selectedShift} open={openShiftDetails} onClose={() => setOpenShiftDetails(false)} />
 
         </Container>
+
+        {/* Footer עם הלוגו */}
+        <Box sx={{ py: 2, bgcolor: '#1e3a8a', color: 'white', textAlign: 'center', mt: 'auto' }}>
+          <img src={logo} alt="לוגו האגודה" style={{ height: 40, borderRadius: 4 }} />
+          <Typography variant="caption" display="block">© כל הזכויות שמורות לאגודת הסטודנטים HIT</Typography>
+        </Box>
+
       </Box>
     </PageContainer>
   );
