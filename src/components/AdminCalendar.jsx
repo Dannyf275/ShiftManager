@@ -1,18 +1,23 @@
+// src/components/AdminCalendar.jsx
 import { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import heLocale from '@fullcalendar/core/locales/he'; // עברית
+import listPlugin from '@fullcalendar/list'; // התוסף החדש לרשימה
+import heLocale from '@fullcalendar/core/locales/he';
 import { db } from '../firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
-import { Paper } from '@mui/material';
+import { Paper, useTheme, useMediaQuery } from '@mui/material';
 
 export default function AdminCalendar({ onEventClick }) {
   const [events, setEvents] = useState([]);
+  
+  // זיהוי גודל מסך
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // האם זה מובייל?
 
   useEffect(() => {
-    // האזנה בזמן אמת לשינויים באוסף 'shifts'
     const shiftsCollection = collection(db, 'shifts');
     const unsubscribe = onSnapshot(shiftsCollection, (snapshot) => {
       const shiftsData = snapshot.docs.map(doc => ({
@@ -20,7 +25,7 @@ export default function AdminCalendar({ onEventClick }) {
         title: doc.data().title,
         start: doc.data().start,
         end: doc.data().end,
-        extendedProps: { ...doc.data() } // שמירת כל שאר המידע
+        extendedProps: { ...doc.data() }
       }));
       setEvents(shiftsData);
     });
@@ -29,25 +34,35 @@ export default function AdminCalendar({ onEventClick }) {
   }, []);
 
   return (
-    <Paper elevation={3} sx={{ p: 2, height: '100%', minHeight: '70vh' }}>
+    <Paper elevation={3} sx={{ p: isMobile ? 1 : 2, height: '100%', minHeight: '60vh' }}>
       <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+        // שינוי תצוגה דינמי לפי גודל מסך
+        initialView={isMobile ? "listMonth" : "dayGridMonth"} 
+        // עדכון כותרות הלוח שיתאימו למובייל
         headerToolbar={{
-          left: 'prev,next today',
+          left: isMobile ? 'prev,next' : 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek'
+          right: isMobile ? 'listMonth,timeGridDay' : 'dayGridMonth,timeGridWeek'
+        }}
+        buttonText={{
+          today: 'היום',
+          month: 'חודש',
+          week: 'שבוע',
+          day: 'יום',
+          list: 'רשימה'
         }}
         locale={heLocale}
         direction="rtl"
         height="100%"
         events={events}
         eventClick={(info) => {
-          // הפעלת הפונקציה שהועברה מבחוץ (אם הועברה)
           if (onEventClick) {
             onEventClick(info.event);
           }
         }}
+        // במובייל נסתיר את השעות כדי לחסוך מקום, בדסקטופ נציג
+        displayEventTime={!isMobile} 
       />
     </Paper>
   );

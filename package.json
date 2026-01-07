@@ -15,6 +15,7 @@
     "@fontsource/rubik": "^5.2.8",
     "@fullcalendar/daygrid": "^6.1.20",
     "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/list": "^6.1.20",
     "@fullcalendar/react": "^6.1.20",
     "@fullcalendar/timegrid": "^6.1.20",
     "@mui/icons-material": "^7.3.6",
