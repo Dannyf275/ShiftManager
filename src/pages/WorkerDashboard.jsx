@@ -1,6 +1,6 @@
 // src/pages/WorkerDashboard.jsx
 import { useState } from 'react';
-import { AppBar, Toolbar, Typography, Container, Box, Button, Tab, Tabs, Paper, useTheme, useMediaQuery, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Container, Box, Button, Tab, Tabs, Paper, useTheme, useMediaQuery, IconButton, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LoginIcon from '@mui/icons-material/Login';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -37,28 +37,32 @@ export default function WorkerDashboard() {
           background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
           pb: isMobile ? 2 : 4 
         }}>
-          <Toolbar sx={{ justifyContent: 'space-between', px: isMobile ? 1 : 3 }}>
-            {!isMobile && <Box width={100} />}
-            
-            <Typography variant={isMobile ? "h6" : "h5"} component="div" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
+          <Toolbar>
+            {/* כותרת - לוקחת את כל המקום הפנוי ודוחפת את הכפתור שמאלה */}
+            <Typography variant={isMobile ? "h6" : "h5"} component="div" sx={{ flexGrow: 1, fontWeight: 'bold', letterSpacing: 1 }}>
               פורטל שיבוץ
             </Typography>
             
-            {/* כפתור מנהל קומפקטי במובייל */}
-            {isMobile ? (
-               <IconButton color="inherit" onClick={() => navigate('/login')}>
-                 <LoginIcon />
-               </IconButton>
-            ) : (
-               <Button 
-                 color="inherit" 
-                 startIcon={<LoginIcon />} 
-                 onClick={() => navigate('/login')}
-                 sx={{ bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
-               >
-                 כניסת מנהל
-               </Button>
-            )}
+            {/* כפתור מנהל */}
+            <Tooltip title="כניסת מנהל">
+              {isMobile ? (
+                 <IconButton 
+                    onClick={() => navigate('/login')}
+                    sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}
+                 >
+                   <LoginIcon />
+                 </IconButton>
+              ) : (
+                 <Button 
+                   color="inherit" 
+                   startIcon={<LoginIcon />} 
+                   onClick={() => navigate('/login')}
+                   sx={{ bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
+                 >
+                   כניסת מנהל
+                 </Button>
+              )}
+            </Tooltip>
           </Toolbar>
           
           <Container maxWidth="xl">
@@ -73,7 +77,7 @@ export default function WorkerDashboard() {
                 value={viewMode} 
                 onChange={handleTabChange} 
                 centered 
-                variant={isMobile ? "fullWidth" : "standard"} // במובייל הטאבים יתפסו את כל הרוחב
+                variant={isMobile ? "fullWidth" : "standard"}
                 textColor="inherit"
                 indicatorColor="secondary"
                 sx={{ '& .MuiTab-root': { color: 'rgba(255,255,255,0.7)', '&.Mui-selected': { color: 'white', fontWeight: 'bold' } } }}
