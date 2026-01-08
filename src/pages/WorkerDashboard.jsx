@@ -10,7 +10,7 @@ import AdminCalendar from '../components/AdminCalendar';
 import ShiftCardList from '../components/ShiftCardList';
 import ShiftRequestDialog from '../components/ShiftRequestDialog';
 import PageContainer from '../components/PageContainer';
-import logo from '../assets/logo.jpg'; // ייבוא הלוגו
+import logo from '../assets/logo.jpg'; 
 
 export default function WorkerDashboard() {
   const [selectedShift, setSelectedShift] = useState(null);
@@ -35,51 +35,58 @@ export default function WorkerDashboard() {
       <Box sx={{ flexGrow: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f8fafc' }}>
         
         <AppBar position="static" elevation={0} sx={{ 
-  background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
-  pb: isMobile ? 2 : 4 
-}}>
-  <Toolbar>
-    {/* לוגו בצד שמאל (רק בדסקטופ) */}
-    {!isMobile && (
-      <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-        <img src={logo} alt="לוגו האגודה" style={{ height: 40, borderRadius: 4 }} />
-      </Box>
-    )}
+          background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+          pb: isMobile ? 2 : 4 
+        }}>
+          {/* הוספנו position relative כדי לאפשר מיקום אבסולוטי לכותרת */}
+          <Toolbar sx={{ justifyContent: 'space-between', position: 'relative' }}>
+            
+            {/* צד שמאל: לוגו (רק בדסקטופ) */}
+            {!isMobile ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', mr: 2, zIndex: 1 }}>
+                <img src={logo} alt="לוגו האגודה" style={{ height: 40, borderRadius: 4 }} />
+              </Box>
+            ) : <Box />} {/* Box ריק לשמירה על מבנה אם צריך, אבל הכותרת אבסולוטית אז זה פחות משנה */}
 
-    {/* הכותרת - הוספנו textAlign: 'center' */}
-    <Typography 
-      variant={isMobile ? "h6" : "h5"} 
-      component="div" 
-      sx={{ 
-        flexGrow: 1, 
-        fontWeight: 'bold', 
-        letterSpacing: 1,
-        textAlign: 'center' 
-      }}
-    >
-    פורטל שיבוץ
-    </Typography>
-    
-    <Tooltip title="כניסת מנהל">
-      {isMobile ? (
-          <IconButton 
-            onClick={() => navigate('/login')}
-            sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}
-          >
-            <LoginIcon />
-          </IconButton>
-      ) : (
-          <Button 
-            color="inherit" 
-            startIcon={<LoginIcon />} 
-            onClick={() => navigate('/login')}
-            sx={{ bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
-          >
-            כניסת מנהל
-          </Button>
-      )}
-    </Tooltip>
-  </Toolbar>
+            {/* הכותרת - ממורכזת אבסולוטית למסך */}
+            <Typography 
+              variant={isMobile ? "h6" : "h5"} 
+              component="div" 
+              sx={{ 
+                position: 'absolute',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontWeight: 'bold', 
+                letterSpacing: 1,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              פורטל שיבוץ
+            </Typography>
+            
+            {/* צד ימין: כפתור מנהל */}
+            <Box sx={{ zIndex: 1 }}>
+              <Tooltip title="כניסת מנהל">
+                {isMobile ? (
+                   <IconButton 
+                      onClick={() => navigate('/login')}
+                      sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.2)', '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }}
+                   >
+                     <LoginIcon />
+                   </IconButton>
+                ) : (
+                   <Button 
+                     color="inherit" 
+                     startIcon={<LoginIcon />} 
+                     onClick={() => navigate('/login')}
+                     sx={{ bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
+                   >
+                     כניסת מנהל
+                   </Button>
+                )}
+              </Tooltip>
+            </Box>
+          </Toolbar>
           
           <Container maxWidth="xl">
             <Paper sx={{ 
@@ -126,9 +133,9 @@ export default function WorkerDashboard() {
           />
         </Container>
 
-        {/* Footer עם הלוגו */}
+        {/* Footer */}
         <Box sx={{ py: 2, bgcolor: '#1e40af', color: 'white', textAlign: 'center', mt: 'auto' }}>
-          <img src={logo} alt="לוגו האגודה" style={{ height: 40, borderRadius: 4 }} />
+          <img src={logo} alt="לוגו האגודה" style={{ height: 30, borderRadius: 4, marginBottom: 8 }} />
           <Typography variant="caption" display="block">© כל הזכויות שמורות לאגודת הסטודנטים HIT</Typography>
         </Box>
       </Box>

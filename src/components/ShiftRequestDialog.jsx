@@ -10,7 +10,7 @@ import { collection, addDoc } from 'firebase/firestore';
 export default function ShiftRequestDialog({ open, onClose, shift }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [workerId, setWorkerId] = useState(''); // שדה חדש לת"ז
+  const [workerId, setWorkerId] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -31,7 +31,6 @@ export default function ShiftRequestDialog({ open, onClose, shift }) {
       return;
     }
 
-    // בדיקה בסיסית לתקינות ת"ז (אופציונלי: אפשר להוסיף ולידציה מורכבת יותר)
     if (workerId.length < 9) {
       alert('נא להזין מספר תעודת זהות תקין (9 ספרות)');
       return;
@@ -42,10 +41,11 @@ export default function ShiftRequestDialog({ open, onClose, shift }) {
       await addDoc(collection(db, 'requests'), {
         shiftId: shift.id,
         shiftTitle: shift.title,
-        shiftStart: shift.startStr,
+        // התיקון: שימוש ב-shift.start במקום shift.startStr שלא תמיד קיים
+        shiftStart: shift.start || shift.startStr, 
         workerName: name,
         workerPhone: phone,
-        workerId: workerId, // שמירת הת"ז
+        workerId: workerId,
         requestedRole: selectedRole,
         status: 'pending',
         createdAt: new Date()
@@ -53,8 +53,8 @@ export default function ShiftRequestDialog({ open, onClose, shift }) {
       setSuccess(true);
       setTimeout(() => onClose(), 2000);
     } catch (error) {
-      console.error(error);
-      alert("שגיאה בשליחת הבקשה");
+      console.error("Error sending request: ", error);
+      alert("שגיאה בשליחת הבקשה: " + error.message);
     }
     setLoading(false);
   };
@@ -86,8 +86,8 @@ export default function ShiftRequestDialog({ open, onClose, shift }) {
                 onChange={(e) => setWorkerId(e.target.value)} 
                 fullWidth 
                 required
-                type="number" // מקלדת מספרים במובייל
-                placeholder="לצורך מעקב שעות בלבד"
+                type="number"
+                placeholder="לצורך מעקב שעות"
               />
               <TextField 
                 label="טלפון" 
